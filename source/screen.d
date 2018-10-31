@@ -6,14 +6,19 @@ import assets;
 
 SDL_Window* window;
 SDL_Renderer* renderer;
+int window_xsize;
+int window_ysize;
 
-void init(string window_title, int window_xsize, int window_ysize, int render_scale) {
+void init(string window_title, int inp_window_xsize, int inp_window_ysize, int render_scale) {
   DerelictSDL2.load();
   DerelictSDL2Image.load();
+
+  window_xsize = inp_window_xsize;
+  window_ysize = inp_window_ysize;
+
   window = SDL_CreateWindow(cast(char*)window_title, SDL_WINDOWPOS_UNDEFINED, 
     SDL_WINDOWPOS_UNDEFINED, window_xsize, window_ysize, SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_PRESENTVSYNC);
-  SDL_RenderSetScale(renderer,render_scale,render_scale);
 }
 
 void clear(){
