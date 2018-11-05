@@ -27,12 +27,12 @@ class Girl : GameObject {
 
   override void step() {
     sprite_index = sprite_index+0.1;
-    if(sprite_index>=4) sprite_index=0;
+    if(sprite_index >= 4) sprite_index=0;
     
     screen.draw_sprite(main_sprite, cast(int)sprite_index, x, y);
 
-    if(keyboard.is_pressed("A")){
-      writeln("A has been pressed!");
+    if(keyboard.is_down("A")){
+      assets.draw_debug_text("A has been pressed!");
     }
   }
 }

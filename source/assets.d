@@ -15,7 +15,7 @@ Sprite debug_sprite;
 Array!(string) debug_text;
 
 
-string DEBUG_ALPHA = " !+#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ";
+string DEBUG_ALPHA = " !+#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
 
 private SDL_Texture* load_image_to_texture(string filename){
@@ -43,10 +43,6 @@ public void output_debug_text() {
     }
   }
   debug_text.clear();
-
-  //for(int i=0;i<140;i++){
-  //  screen.draw_sprite(debug_sprite, i, (i%16)*13, cast(int)(i/16)*15);
-  //}
 }
 
 class Sprite {
