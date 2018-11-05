@@ -7,8 +7,9 @@ private bool[string] keys_down;
 private bool[string] keys_pressed;
 
 void pass_pressed_key(SDL_Keysym input_key){
-	keys_down[to!string(SDL_GetKeyName(input_key.sym))] = true;
-	keys_pressed[to!string(SDL_GetKeyName(input_key.sym))] = true;
+	string keyname = to!string(SDL_GetKeyName(input_key.sym));
+	keys_down[keyname] = true;
+	keys_pressed[keyname] = true;
 }
 void pass_lifted_key(SDL_Keysym input_key){
 	keys_down[to!string(SDL_GetKeyName(input_key.sym))] = false;

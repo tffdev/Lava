@@ -14,9 +14,7 @@ import screen;
 Sprite debug_sprite;
 Array!(string) debug_text;
 
-
 string DEBUG_ALPHA = " !+#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
 
 private SDL_Texture* load_image_to_texture(string filename){
   SDL_Surface* image_buffer = IMG_Load(cast(char*)filename);
@@ -66,11 +64,9 @@ class Sprite {
   void create_subimage_quads() {
     int xc_max = cast(int)(sprite_width/subimage_width);
     int yc_max = cast(int)(sprite_height/subimage_height);
-    //writeln(xc_max, " x ", yc_max);
     for(int yc = 0; yc < yc_max; yc++){
       for(int xc = 0; xc < xc_max; xc++){
         SDL_Rect rect = { subimage_width*xc, subimage_height*yc, subimage_width, subimage_height };
-        //writeln(rect, " at index ", yc*xc_max + xc);
         subimage_quads ~= rect;
       }
     }
