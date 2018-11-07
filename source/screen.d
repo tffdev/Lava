@@ -69,7 +69,7 @@ void present(){
   SDL_SetRenderTarget(renderer, prescreen_texture);
 }
 
-void draw_sprite(Sprite sprite_to_draw, int index, int x, int y) {
+void drawSprite(Sprite sprite_to_draw, int index, int x, int y) {
   SDL_Rect onscreen_rect = 
     { x, y, sprite_to_draw.subimage_width, sprite_to_draw.subimage_height };
   
@@ -83,7 +83,7 @@ void draw_sprite(Sprite sprite_to_draw, int index, int x, int y) {
     &onscreen_rect, 0.0, 
     &origin, SDL_FLIP_NONE);
 }
-void set_window_title(string title){
+void setWindowTitle(string title){
   SDL_SetWindowTitle(window, cast(char*)title);
 }
 

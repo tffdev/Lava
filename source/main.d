@@ -1,17 +1,18 @@
 import std.stdio;
+import std.format;
 
 import screen;
 import assets;
 import game;
 import keyboard;
 import maps;
-
-import std.format;
+import derelict.sdl2.sdl;
+import derelict.sdl2.image;
 
 void main()
-{  
+{ 
   screen.init("oofy", 640, 480, 2, true);  
-  maps.load_map("maps/untitled.json","images/shrinetiles.png");
+  maps.load_map("maps/map_1.json","images/shrinetiles.png");
   game.add_object(new Girl(50, 50));
   game.enter_event_loop();
 }
@@ -32,7 +33,7 @@ class Girl : GameObject
   {
     x = ix;
     y = iy;
-    main_sprite = new Sprite("images/dora.png", 32, 32);
+    main_sprite = new Sprite("images/tg.png", 32, 32);
   }
 
   override void step()

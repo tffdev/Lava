@@ -1,72 +1,69 @@
 module assets;
+
 import std.stdio;
 import std.container.array;
 import std.string;
 
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
+
 import screen;
 
-/*
- * "path/to/image" => [SDL_Texture, quads]
- */  
+Sprite debugTextSprite;
+Array!(string) debugTextBuffer;
 
-Sprite debug_sprite;
-Array!(string) debug_text;
+immutable DEBUGALPHABET = " !+#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
-string DEBUG_ALPHA = " !+#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
-private SDL_Texture* load_image_to_texture(string filename){
-  SDL_Surface* image_buffer = IMG_Load(cast(char*)filename);
-  SDL_Texture* texture_buffer 
-    = SDL_CreateTextureFromSurface(screen.renderer, image_buffer);
-  SDL_FreeSurface(image_buffer);
-  return texture_buffer;
+private SDL_Texture* loadImageToTexture(string filename){
+  SDL_Surface* imageBuffer = IMG_Load(cast(char*)filename);
+  SDL_Texture* textureBuffer = SDL_CreateTextureFromSurface(screen.renderer, imageBuffer);
+  SDL_FreeSurface(imageBuffer);
+  return textureBuffer;
 }
 
 public void draw_debug_text(string input) {
-  if(!debug_sprite){
-    debug_sprite = new Sprite("source/debug_font.gif", 12, 13);
+  if(!debugTextSprite){
+    debugTextSprite = new Sprite("source/debug_font.gif", 12, 13);
   }
-  debug_text ~= input;
+  debugTextBuffer ~= input;
 }
 
 public void output_debug_text() {
-  for (int row = 0; row < debug_text.length(); row++){
-    string text = debug_text[row];
+  for (int row = 0; row < debugTextBuffer.length(); row++){
+    string text = debugTextBuffer[row];
     for(int i=0; i<text.length;i++){
       char letter = text[i];
-      screen.draw_sprite(debug_sprite, 
-        cast(int)indexOf(DEBUG_ALPHA, letter), 5+i*9, 5+15*row);
+      screen.drawSprite(debugTextSprite, 
+        cast(int)indexOf(DEBUGALPHABET, letter), 5+i*9, 5+15*row);
     }
   }
-  debug_text.clear();
+  debugTextBuffer.clear();
 }
 
 class Sprite {
   SDL_Texture* texture;
 
-  int sprite_width;
-  int sprite_height;
-  int subimage_width;
+  int spriteWidth;
+  int spriteHeight;
+  int subimageWidth;
   int subimage_height;
   SDL_Rect[] subimage_quads;
 
-  this(string filename, int inp_subimage_width, int inp_subimage_height){
-    texture = load_image_to_texture(filename);
-    SDL_QueryTexture(texture, null, null, &sprite_width, &sprite_height);
+  this(string filename, int inpSubimageWidth, int inp_subimage_height){
+    texture = loadImageToTexture(filename);
+    SDL_QueryTexture(texture, null, null, &spriteWidth, &spriteHeight);
 
-    subimage_width = inp_subimage_width;
-    subimage_height = inp_subimage_height;
-    create_subimage_quads();
+    subimageWidth = inpSubimageWidth;
+    subimage_height = inpSubimage_height;
+    createSubimageQuads();
   }
 
-  void create_subimage_quads() {
-    int xc_max = cast(int)(sprite_width/subimage_width);
-    int yc_max = cast(int)(sprite_height/subimage_height);
+  void createSubimageQuads() {
+    int xc_max = cast(int)(spriteWidth/subimageWidth);
+    int yc_max = cast(int)(spriteHeight/subimage_height);
     for(int yc = 0; yc < yc_max; yc++){
       for(int xc = 0; xc < xc_max; xc++){
-        SDL_Rect rect = { subimage_width*xc, subimage_height*yc, subimage_width, subimage_height };
+        SDL_Rect rect = { subimageWidth*xc, subimage_height*yc, subimageWidth, subimage_height };
         subimage_quads ~= rect;
       }
     }

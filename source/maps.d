@@ -1,5 +1,4 @@
 module maps;
-import std.stdio;
 import std.json;
 import std.file;
 
@@ -16,7 +15,7 @@ int tile_height;
 
 void load_map(string mapfile, string imagefile)
 {
-  map_data = std.json.parseJSON(std.file.readText(mapfile));
+  JSONValue map_data = std.json.parseJSON(std.file.readText(mapfile));
   map_width = cast(int)map_data["width"].integer;
   map_height = cast(int)map_data["height"].integer;
   tile_width = cast(int)map_data["tilewidth"].integer;
