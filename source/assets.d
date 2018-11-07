@@ -3,11 +3,10 @@ module assets;
 import std.stdio;
 import std.container.array;
 import std.string;
-
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
-
 import screen;
+import error;
 
 Sprite debugTextSprite;
 Array!(string) debugTextBuffer;
