@@ -1,38 +1,40 @@
 module maps;
+import std.stdio;
 import std.json;
 import std.file;
 
 import assets;
 import screen;
 
-Sprite tilemap_sprite;
+Sprite tilemapSprite;
 
-int[] map_tiles;
-int map_width;
-int map_height;
-int tile_width;
-int tile_height;
+int[] mapTiles;
+int mapWidth;
+int mapHeight;
+int tileWidth;
+int tileHeight;
 
-void load_map(string mapfile, string imagefile)
+void loadMap(string mapfile, string imagefile)
 {
-  JSONValue map_data = std.json.parseJSON(std.file.readText(mapfile));
-  map_width = cast(int)map_data["width"].integer;
-  map_height = cast(int)map_data["height"].integer;
-  tile_width = cast(int)map_data["tilewidth"].integer;
-  tile_height = cast(int)map_data["tileheight"].integer;
-  tilemap_sprite = new Sprite(imagefile, 16, 16);
-  for(int i=0;i<map_width*map_height;i++){
-    map_tiles ~= cast(int)map_data["layers"][0]["data"][i].integer - 1;
+  string mapfileOutput = std.file.readText(mapfile);
+  JSONValue mapData = std.json.parseJSON(mapfileOutput);
+  mapWidth = cast(int)mapData["width"].integer;
+  mapHeight = cast(int)mapData["height"].integer;
+  tileWidth = cast(int)mapData["tilewidth"].integer;
+  tileHeight = cast(int)mapData["tileheight"].integer;
+  tilemapSprite = new Sprite(imagefile, 16, 16);
+  for(int i=0;i<mapWidth*mapHeight;i++){
+    mapTiles ~= cast(int)mapData["layers"][0]["data"][i].integer - 1;
   }
 }
 
-void draw_map() {
-  for(int x=0;x<map_width;x++){
-    for(int y=0;y<map_height;y++){
-      int tile = map_tiles[x%map_width + y*map_width];
+void drawMap() {
+  for(int x=0;x<mapWidth;x++){
+    for(int y=0;y<mapHeight;y++){
+      int tile = mapTiles[x%mapWidth + y*mapWidth];
       if(tile!=-1){
-        screen.draw_sprite(tilemap_sprite, tile, 
-          x*tile_width, y*tile_height);
+        screen.drawSprite(tilemapSprite, tile, 
+          x*tileWidth, y*tileHeight);
       }
     }
   }

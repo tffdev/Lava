@@ -21,14 +21,14 @@ private SDL_Texture* loadImageToTexture(string filename){
   return textureBuffer;
 }
 
-public void draw_debug_text(string input) {
+public void drawDebugText(string input) {
   if(!debugTextSprite){
-    debugTextSprite = new Sprite("source/debug_font.gif", 12, 13);
+    debugTextSprite = new Sprite("source/debugFont.gif", 12, 13);
   }
   debugTextBuffer ~= input;
 }
 
-public void output_debug_text() {
+public void outputDebugText() {
   for (int row = 0; row < debugTextBuffer.length(); row++){
     string text = debugTextBuffer[row];
     for(int i=0; i<text.length;i++){
@@ -41,35 +41,42 @@ public void output_debug_text() {
 }
 
 class Sprite {
+  string spriteFilename;
   SDL_Texture* texture;
-
   int spriteWidth;
   int spriteHeight;
   int subimageWidth;
-  int subimage_height;
-  SDL_Rect[] subimage_quads;
+  int subimageHeight;
+  SDL_Rect[] subimageQuads;
 
-  this(string filename, int inpSubimageWidth, int inp_subimage_height){
+  this(string filename, int inpSubimageWidth, int inpSubimageHeight){
+    spriteFilename = filename;
     texture = loadImageToTexture(filename);
+    if(texture == null) {
+      error.report(error.missingFile, filename);
+    }
     SDL_QueryTexture(texture, null, null, &spriteWidth, &spriteHeight);
-
     subimageWidth = inpSubimageWidth;
-    subimage_height = inpSubimage_height;
+    subimageHeight = inpSubimageHeight;
     createSubimageQuads();
   }
-
+  
   void createSubimageQuads() {
-    int xc_max = cast(int)(spriteWidth/subimageWidth);
-    int yc_max = cast(int)(spriteHeight/subimage_height);
-    for(int yc = 0; yc < yc_max; yc++){
-      for(int xc = 0; xc < xc_max; xc++){
-        SDL_Rect rect = { subimageWidth*xc, subimage_height*yc, subimageWidth, subimage_height };
-        subimage_quads ~= rect;
+    int xcMax = cast(int)(spriteWidth/subimageWidth);
+    int ycMax = cast(int)(spriteHeight/subimageHeight);
+    for(int yc = 0; yc < ycMax; yc++){
+      for(int xc = 0; xc < xcMax; xc++){
+        SDL_Rect rect = { subimageWidth*xc, subimageHeight*yc, subimageWidth, subimageHeight };
+        subimageQuads ~= rect;
       }
     }
   }
 
-  SDL_Rect get_rect_at_index(int index){
-    return subimage_quads[index];
+  SDL_Rect getRectAtIndex(int index){
+    if(subimageQuads.length - 1 < index){
+      error.report(error.outOfBounds, format("%d %s", index, spriteFilename));
+      return subimageQuads[0];
+    }
+    return subimageQuads[index];
   }
 }
