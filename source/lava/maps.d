@@ -39,3 +39,11 @@ void drawMap() {
     }
   }
 }
+
+int getTileAt(int x, int y){
+  int tileval = (x/tileWidth)%mapWidth + (y/tileHeight)*mapWidth;
+  if(tileval<0 || tileval > mapTiles.length){
+    return -1;
+  }
+  return mapTiles[tileval];
+}

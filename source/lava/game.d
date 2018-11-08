@@ -3,16 +3,15 @@ import std.stdio;
 import std.conv;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
-import screen;
-import assets;
-import keyboard;
+import derelict.sdl2.ttf;
+import lava;
 
 private GameObject[] gameObjects;
 
 /* Base Object template */
 class GameObject {
-  int x;
-  int y;
+  double x;
+  double y;
   void step(){};
 }
 
@@ -34,14 +33,19 @@ void enterEventLoop(){
     }
     SDL_Delay(1);
   }
+  quit();
 }
 
 void step(){
   screen.clear();
+
   /* update and draw stuff */
   foreach(object; gameObjects) {
     object.step();
   }
+  drawMap();
+
+  assets.outputDebugText();
   screen.present();
 }
 
@@ -66,4 +70,10 @@ bool handleEvent(SDL_Event e){
     default: break;
   }
   return false;
+}
+
+private void quit(){
+  printf("Quitting");
+  TTF_Quit();
+  screen.destroy();
 }

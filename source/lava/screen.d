@@ -1,9 +1,10 @@
 module screen;
 import std.stdio;
+import std.algorithm;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
-import assets;
-import maps;
+import derelict.sdl2.ttf;
+import lava;
 
 SDL_Window* window;
 SDL_Renderer* renderer;
@@ -21,8 +22,9 @@ int renderScale;
  */
 void init(string windowTitle, int inpWindowXsize, 
   int inpWindowYsize, int inpRenderScale, bool resizable = true) {
-  DerelictSDL2.load();
-  DerelictSDL2Image.load();
+
+  loadDerelict();
+
   windowXsize = inpWindowXsize;
   windowYsize = inpWindowYsize;
   renderScale = inpRenderScale;
@@ -37,41 +39,66 @@ void init(string windowTitle, int inpWindowXsize,
   SDL_AddEventWatch(&eventWindow, window);
 }
 
+private void loadDerelict(){
+  DerelictSDL2.load();
+  DerelictSDL2Image.load();
+  DerelictSDL2ttf.load();
+  TTF_Init();
+}
+
 void clear(){
   SDL_SetRenderDrawColor(screen.renderer, 255, 255, 255, 255);
   SDL_RenderClear(screen.renderer);
 }
 
 void present(){
-  drawMap();
   int w, h;
   SDL_GetWindowSize(window, &w, &h);
 
   SDL_Rect prescreenRect = { 0, 0, windowXsize/renderScale, windowYsize/renderScale };
-  SDL_Rect windowRect = { 0, 0, windowXsize, windowYsize };
+
+  double sizex = windowXsize/renderScale;
+  double sixey = windowYsize/renderScale;
+
+  double wScale = min(w/sizex, h/sixey);
+  double ratio = sizex/sixey; 
+  int xoffset = cast(int)max(((w - h*ratio)/2), 0);
+  int yoffset = cast(int)max(((h - w/ratio)/2), 0);
+
+  SDL_Rect windowRect = { xoffset, yoffset, 
+    cast(int)((windowXsize/renderScale)*wScale), cast(int)((windowYsize/renderScale)*wScale) };
+
   // Display on screen
   SDL_SetRenderTarget(renderer, null);
   SDL_RenderCopy(renderer, prescreenTexture, &prescreenRect, &windowRect);
-  assets.outputDebugText();
   SDL_RenderPresent(screen.renderer);
   SDL_SetRenderTarget(renderer, prescreenTexture);
 }
 
-void drawSprite(Sprite spriteToDraw, int index, int x, int y) {
+void drawSprite(Sprite spriteToDraw, int index, double x, double y) {
   SDL_Rect onscreenRect = 
-    { x, y, spriteToDraw.subimageWidth, spriteToDraw.subimageHeight };
+    { cast(int)x, cast(int)y, spriteToDraw.subimageWidth, spriteToDraw.subimageHeight };
   
+  SDL_RendererFlip flip = SDL_FLIP_NONE;
+  if(spriteToDraw.hflip){flip |= SDL_FLIP_HORIZONTAL;}
+  if(spriteToDraw.vflip){flip |= SDL_FLIP_VERTICAL;}
+
   SDL_Rect spriteRect = spriteToDraw.getRectAtIndex(index);
   SDL_Point origin = {0,0};
   SDL_RenderCopyEx(screen.renderer, 
     spriteToDraw.texture, 
     &spriteRect, 
     &onscreenRect, 0.0, 
-    &origin, SDL_FLIP_NONE);
+    &origin, flip);
 }
 
 void setWindowTitle(string title){
   SDL_SetWindowTitle(window, cast(char*)title);
+}
+
+void destroy(){
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
 }
 
 // Called when window is modified
