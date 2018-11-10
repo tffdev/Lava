@@ -15,38 +15,11 @@ class GameObject {
   void step(){};
 }
 
-void enterEventLoop(){
-  int ticksBuffer = 0;
-  while(1){
-    int ticksCurrent = SDL_GetTicks();
-    if(ticksBuffer + 1000/60 < ticksCurrent){
-      int presetp = SDL_GetTicks();
-      ticksBuffer = ticksCurrent;
-      SDL_Event e;
-      bool quit = false;
-      while(SDL_PollEvent(&e)){
-        quit = handleEvent(e);
-      }
-      step();
-      keyboard.clearPressedKeys();
-      if(quit){break;}
-    }
-    SDL_Delay(1);
-  }
-  quit();
-}
-
-void step(){
-  screen.clear();
-
+void stepAll() {
   /* update and draw stuff */
   foreach(object; gameObjects) {
     object.step();
   }
-  drawMap();
-
-  assets.outputDebugText();
-  screen.present();
 }
 
 void addObject(GameObject obj){
@@ -72,7 +45,7 @@ bool handleEvent(SDL_Event e){
   return false;
 }
 
-private void quit(){
+public void quit(){
   printf("Quitting");
   TTF_Quit();
   screen.destroy();

@@ -70,16 +70,25 @@ class Sprite {
   int subimageHeight;
   SDL_Rect[] subimageQuads;
 
-  this(string filename, int inpSubimageWidth, int inpSubimageHeight){
+  this(string filename, int inpSubimageWidth = -1, int inpSubimageHeight = -1){
     spriteFilename = filename;
     texture = loadImageToTexture(filename);
     if(texture == null) {
       error.report(error.missingFile, filename);
     }
     SDL_QueryTexture(texture, null, null, &spriteWidth, &spriteHeight);
-    subimageWidth = inpSubimageWidth;
-    subimageHeight = inpSubimageHeight;
-    createSubimageQuads();
+    
+    /* If single sprite, then create only 1 rect in subimages */
+    if(inpSubimageWidth == -1 || inpSubimageHeight -1){
+      subimageWidth = spriteWidth;
+      subimageHeight = spriteHeight;
+      SDL_Rect rect = { 0,0,spriteWidth,spriteHeight };
+      subimageQuads ~= rect;
+    }else{
+      subimageWidth = inpSubimageWidth;
+      subimageHeight = inpSubimageHeight;
+      createSubimageQuads();
+    }
   }
   
   void createSubimageQuads() {
