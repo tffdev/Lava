@@ -3,45 +3,37 @@ import std.format;
 import std.algorithm;
 import derelict.sdl2.sdl;
 import lava;
-
-Sprite background1;
+import backgrounds;
 
 void main()
 { 
-  screen.init("oofy", 640, 480, 2, true);  
+  screen.init("Lava Test", 640, 480, 2, true);  
+
+  // START ROOM 1 CREATION
   maps.loadMap("maps/map_1.json","images/tiles.png");
   game.addObject(new Girl(50, 50));
-
-  background1 = new Sprite("images/bg91.png");
+  setBackground(3,"images/bg91.png", 0.3, 40);
+  setBackground(2,"images/bg92.png", 0.85);
+  setBackground(1,"images/bg93.png", 0.96);
+  setBackground(0,"images/bg94.png", 1);
+  // END ROOM 1 CREATION
 
   enterEventLoop();
 }
 
-void enterEventLoop(){
-  int ticksBuffer = 0;
-  while(1){
-    int ticksCurrent = SDL_GetTicks();
-    if(ticksBuffer + 1000/60 < ticksCurrent){
-      int presetp = SDL_GetTicks();
-      ticksBuffer = ticksCurrent;
-      SDL_Event e;
-      bool quit = false;
-      while(SDL_PollEvent(&e)){
-        quit = handleEvent(e);
-      }
+void enterEventLoop(){ 
+  void loopfunc() {
+    screen.clear();
+    backgrounds.drawBackgrounds();
+    maps.drawMap();
+    game.stepAll();
+    screen.copyPrescreenToBuffer();
+    text.outputDebugText();
+    screen.present();
+  }
 
-      screen.clear();
-      // Draw bg
-      maps.drawMap();
-      game.stepAll();
-
-      assets.outputDebugText();
-      screen.present();
-
-      keyboard.clearPressedKeys();
-      if(quit){break;}
-    }
-    SDL_Delay(1);
+  while(!lavaShouldQuit()){
+    lavaLoopStep(&loopfunc);
   }
   game.quit();
 }
@@ -50,8 +42,8 @@ class Girl : GameObject
 {
   double xvel, yvel = 0;
   bool onground;
-  double maxmovespeed = 3;
-
+  double maxmovespeed = 2;
+  double accelspeed = 1;
   double spriteIndex = 0;
   Sprite mainSprite;
 
@@ -73,17 +65,24 @@ class Girl : GameObject
   {
     spriteIndex = spriteIndex + animationSpeed;
     if(spriteIndex >= currentAnimation.length) spriteIndex=0;
-    assets.drawDebugText(format("Girl's sprite index: %f", spriteIndex));
+    text.drawDebugText(format("Girl's sprite index: %f", spriteIndex));
+    
     drawText("This is some TTF text! Hello world!", 10, 120);
     
-    if(keyboard.isDown("Left"))  {xvel -= 2; mainSprite.hflip = false;}
-    if(keyboard.isDown("Right")) {xvel += 2; mainSprite.hflip = true;}
+    if(keyboard.isDown("Left"))  {xvel -= accelspeed; mainSprite.hflip = false;}
+    if(keyboard.isDown("Right")) {xvel += accelspeed; mainSprite.hflip = true;}
     if(keyboard.isDown("A") && onground) {y-=1; yvel = -5;}
-    applyPhysics();
-    assets.drawDebugText(format("girl x, y: %s %s", x, y));
-    assets.drawDebugText(format("tile at x, y: %s", getTileAt(cast(int)x+16, cast(int)y+32)));
     
-    screen.drawSprite(mainSprite, currentAnimation[cast(int)spriteIndex], x, y);
+    applyPhysics();
+
+    text.drawDebugText(format("girl x, y: %s %s", x, y));
+    text.drawDebugText(format("tile at x, y: %s", getTileAt(cast(int)x+16, cast(int)y+32)));
+    
+    if(keyboard.isDown("R")) {setBackground(0,"images/bg91.png");}
+    if(keyboard.isDown("R")) {setBackground(0,"images/bg92.png");}
+
+    assets.drawSprite(mainSprite, currentAnimation[cast(int)spriteIndex], x, y);
+    camera.setPosition(x - 100, y-150);
   }
 
   void applyPhysics() {

@@ -33,7 +33,7 @@ void drawMap() {
     for(int y=0;y<mapHeight;y++){
       int tile = mapTiles[x%mapWidth + y*mapWidth];
       if(tile!=-1){
-        screen.drawSprite(tilemapSprite, tile, 
+        assets.drawSprite(tilemapSprite, tile, 
           x*tileWidth, y*tileHeight);
       }
     }

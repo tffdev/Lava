@@ -7,3 +7,7 @@ import game;
 import maps;
 import screen;
 import keyboard;
+import camera;
+import text;
+import log;
+import vfs;

@@ -7,6 +7,32 @@ import derelict.sdl2.ttf;
 import lava;
 
 private GameObject[] gameObjects;
+private bool shouldQuit = false;
+
+public int ticksBuffer = 0;
+
+bool lavaShouldQuit(){
+  return shouldQuit;
+}
+void lavaQuitLoop(){
+  shouldQuit = true;
+}
+void lavaLoopStep(void delegate() _userDefinedLoopFunc) {
+  int ticksCurrent = SDL_GetTicks();
+  if(game.ticksBuffer + 1000/60 < ticksCurrent){
+    int presetp = SDL_GetTicks();
+    game.ticksBuffer = ticksCurrent;
+    SDL_Event e;
+    bool quit = false;
+    while(SDL_PollEvent(&e)){
+      quit = handleEvent(e);
+    }
+    _userDefinedLoopFunc();
+    keyboard.clearPressedKeys();
+    if(quit){lavaQuitLoop();}
+  }
+  SDL_Delay(1);
+}
 
 /* Base Object template */
 class GameObject {
@@ -35,7 +61,7 @@ bool handleEvent(SDL_Event e){
     break;
     case SDL_WINDOWEVENT:
     if(e.window.event == SDL_WINDOWEVENT_RESIZED){
-      printf("Window %d size changed to %dx%d",
+      _log("Window %d size changed to %dx%d",
               e.window.windowID, e.window.data1,
               e.window.data2);
     }
@@ -49,4 +75,5 @@ public void quit(){
   printf("Quitting");
   TTF_Quit();
   screen.destroy();
+  SDL_Quit();
 }

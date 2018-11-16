@@ -12,6 +12,8 @@ SDL_Texture* prescreenTexture;
 int windowXsize;
 int windowYsize;
 int renderScale;
+double width;
+double height;
 
 /*
  * - Load SDL2
@@ -28,6 +30,10 @@ void init(string windowTitle, int inpWindowXsize,
   windowXsize = inpWindowXsize;
   windowYsize = inpWindowYsize;
   renderScale = inpRenderScale;
+
+  width = cast(int)(inpWindowXsize/inpRenderScale);
+  height = cast(int)(inpWindowYsize/inpRenderScale);
+  
   uint windowFlags = SDL_WINDOW_SHOWN;
   if (resizable) windowFlags |= SDL_WINDOW_RESIZABLE;
   window = SDL_CreateWindow(cast(char*)windowTitle, SDL_WINDOWPOS_UNDEFINED, 
@@ -51,7 +57,7 @@ void clear(){
   SDL_RenderClear(screen.renderer);
 }
 
-void present(){
+void copyPrescreenToBuffer(){
   int w, h;
   SDL_GetWindowSize(window, &w, &h);
 
@@ -71,25 +77,11 @@ void present(){
   // Display on screen
   SDL_SetRenderTarget(renderer, null);
   SDL_RenderCopy(renderer, prescreenTexture, &prescreenRect, &windowRect);
-  SDL_RenderPresent(screen.renderer);
-  SDL_SetRenderTarget(renderer, prescreenTexture);
 }
 
-void drawSprite(Sprite spriteToDraw, int index, double x, double y) {
-  SDL_Rect onscreenRect = 
-    { cast(int)x, cast(int)y, spriteToDraw.subimageWidth, spriteToDraw.subimageHeight };
-  
-  SDL_RendererFlip flip = SDL_FLIP_NONE;
-  if(spriteToDraw.hflip){flip |= SDL_FLIP_HORIZONTAL;}
-  if(spriteToDraw.vflip){flip |= SDL_FLIP_VERTICAL;}
-
-  SDL_Rect spriteRect = spriteToDraw.getRectAtIndex(index);
-  SDL_Point origin = {0,0};
-  SDL_RenderCopyEx(screen.renderer, 
-    spriteToDraw.texture, 
-    &spriteRect, 
-    &onscreenRect, 0.0, 
-    &origin, flip);
+void present(){
+  SDL_RenderPresent(screen.renderer);
+  SDL_SetRenderTarget(renderer, prescreenTexture);
 }
 
 void setWindowTitle(string title){

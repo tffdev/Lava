@@ -5,56 +5,34 @@ import std.container.array;
 import std.string;
 import derelict.sdl2.sdl;
 import derelict.sdl2.image;
-import derelict.sdl2.ttf;
 
-import screen;
-import error;
+import lava;
 
-TTF_Font* fontm5x7;
-
-Sprite debugTextSprite;
-Array!(string) debugTextBuffer;
-
-immutable DEBUGALPHABET = " !+#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
-
-private SDL_Texture* loadImageToTexture(string filename){
+public SDL_Texture* loadImageToTexture(string filename){
   SDL_Surface* imageBuffer = IMG_Load(cast(char*)filename);
   SDL_Texture* textureBuffer = SDL_CreateTextureFromSurface(screen.renderer, imageBuffer);
   SDL_FreeSurface(imageBuffer);
   return textureBuffer;
 }
 
-public void drawText(string textToDraw, int x, int y){
-  if(!fontm5x7){
-    fontm5x7 = TTF_OpenFont("source/lava/m5x7.ttf", 15);
-  }
-  SDL_Color color = { 0, 0, 0 };
-  SDL_Surface* surface = TTF_RenderText_Solid(fontm5x7, cast(char*)textToDraw, color);
-  SDL_Texture* fontRender = SDL_CreateTextureFromSurface(screen.renderer, surface);
-  SDL_Rect a = { 0, 0, surface.w, surface.h };
-  SDL_Rect b = { x, y, surface.w, surface.h };
-  SDL_FreeSurface(surface);
-  SDL_RenderCopy(screen.renderer,fontRender,&a,&b);
-  SDL_DestroyTexture(fontRender);
-}
+void drawSprite(Sprite spriteToDraw, int index, double x, double y) {
+  SDL_Rect onscreenRect = { 
+    cast(int)x - ((spriteToDraw.ignoreCamera == true)? 0 : camera.getPositionX()), 
+    cast(int)y - ((spriteToDraw.ignoreCamera == true)? 0 : camera.getPositionY()), 
+    spriteToDraw.subimageWidth, 
+    spriteToDraw.subimageHeight };
+  
+  SDL_RendererFlip flip = SDL_FLIP_NONE;
+  if(spriteToDraw.hflip){flip |= SDL_FLIP_HORIZONTAL;}
+  if(spriteToDraw.vflip){flip |= SDL_FLIP_VERTICAL;}
 
-public void drawDebugText(string input) {
-  if(!debugTextSprite){
-    debugTextSprite = new Sprite("source/lava/debugFont.gif", 12, 13);
-  }
-  debugTextBuffer ~= input;
-}
-
-public void outputDebugText() {
-  for (int row = 0; row < debugTextBuffer.length(); row++){
-    string text = debugTextBuffer[row];
-    for(int i=0; i<text.length;i++){
-      char letter = text[i];
-      screen.drawSprite(debugTextSprite, 
-        cast(int)indexOf(DEBUGALPHABET, letter), 5+i*9, 5+15*row);
-    }
-  }
-  debugTextBuffer.clear();
+  SDL_Rect spriteRect = spriteToDraw.getRectAtIndex(index);
+  SDL_Point origin = {0,0};
+  SDL_RenderCopyEx(screen.renderer, 
+    spriteToDraw.texture, 
+    &spriteRect, 
+    &onscreenRect, 0.0, 
+    &origin, flip);
 }
 
 class Sprite {
@@ -63,6 +41,7 @@ class Sprite {
 
   bool hflip;
   bool vflip;
+  bool ignoreCamera = false;
 
   int spriteWidth;
   int spriteHeight;
@@ -79,7 +58,7 @@ class Sprite {
     SDL_QueryTexture(texture, null, null, &spriteWidth, &spriteHeight);
     
     /* If single sprite, then create only 1 rect in subimages */
-    if(inpSubimageWidth == -1 || inpSubimageHeight -1){
+    if(inpSubimageWidth == -1 || inpSubimageHeight == -1){
       subimageWidth = spriteWidth;
       subimageHeight = spriteHeight;
       SDL_Rect rect = { 0,0,spriteWidth,spriteHeight };
@@ -89,6 +68,11 @@ class Sprite {
       subimageHeight = inpSubimageHeight;
       createSubimageQuads();
     }
+  }
+
+  ~this() {
+    _log("Destroying sprite");
+    SDL_DestroyTexture(texture);
   }
   
   void createSubimageQuads() {
