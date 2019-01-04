@@ -1,96 +1,102 @@
+/**
+    Contains sprite functionality and 
+*/
 module assets;
 
+import lava;
 import std.stdio;
 import std.container.array;
 import std.string;
-import derelict.sdl2.sdl;
-import derelict.sdl2.image;
 
-import lava;
-
+// TODO: Move this into Filesystem
 public SDL_Texture* loadImageToTexture(string filename){
-  SDL_Surface* imageBuffer = IMG_Load(cast(char*)filename);
-  SDL_Texture* textureBuffer = SDL_CreateTextureFromSurface(screen.renderer, imageBuffer);
-  SDL_FreeSurface(imageBuffer);
-  return textureBuffer;
+    SDL_Surface* imageBuffer = IMG_Load(cast(char*)filename);
+    SDL_Texture* textureBuffer = SDL_CreateTextureFromSurface(screen.renderer, imageBuffer);
+    SDL_FreeSurface(imageBuffer);
+    return textureBuffer;
 }
 
+/**
+    Interfaces [directly] with the SDL rendering API to draw a sprite object onto
+    the screen. 
+*/
 void drawSprite(Sprite spriteToDraw, int index, double x, double y) {
-  SDL_Rect onscreenRect = { 
-    cast(int)x - ((spriteToDraw.ignoreCamera == true)? 0 : camera.getPositionX()), 
-    cast(int)y - ((spriteToDraw.ignoreCamera == true)? 0 : camera.getPositionY()), 
-    spriteToDraw.subimageWidth, 
-    spriteToDraw.subimageHeight };
+    SDL_Rect onscreenRect = { 
+        cast(int)x - ((spriteToDraw.ignoreCamera == true)? 0 : camera.getXi()), 
+        cast(int)y - ((spriteToDraw.ignoreCamera == true)? 0 : camera.getYi()), 
+        spriteToDraw.subimageSize.x, 
+        spriteToDraw.subimageSize.y
+    };
   
-  SDL_RendererFlip flip = SDL_FLIP_NONE;
-  if(spriteToDraw.hflip){flip |= SDL_FLIP_HORIZONTAL;}
-  if(spriteToDraw.vflip){flip |= SDL_FLIP_VERTICAL;}
+    SDL_RendererFlip flip = SDL_FLIP_NONE;
+    if(spriteToDraw.hflip) flip |= SDL_FLIP_HORIZONTAL;
+    if(spriteToDraw.vflip) flip |= SDL_FLIP_VERTICAL;
 
-  SDL_Rect spriteRect = spriteToDraw.getRectAtIndex(index);
-  SDL_Point origin = {0,0};
-  SDL_RenderCopyEx(screen.renderer, 
-    spriteToDraw.texture, 
-    &spriteRect, 
-    &onscreenRect, 0.0, 
-    &origin, flip);
+    SDL_Rect spriteRect = spriteToDraw.__getRectAtIndex(index);
+    SDL_Point origin = { 0, 0 };
+    SDL_RenderCopyEx(
+        screen.renderer, 
+        spriteToDraw.texture, 
+        &spriteRect, 
+        &onscreenRect, 0.0, 
+        &origin, flip
+    );
 }
 
 class Sprite {
-  string spriteFilename;
-  SDL_Texture* texture;
+    string spriteFilename;
+    SDL_Texture* texture;
 
-  bool hflip;
-  bool vflip;
-  bool ignoreCamera = false;
+    bool hflip;
+    bool vflip;
+    bool ignoreCamera = false;
 
-  int spriteWidth;
-  int spriteHeight;
-  int subimageWidth;
-  int subimageHeight;
-  SDL_Rect[] subimageQuads;
+    Vec2 spriteSize;
+    Vec2 subimageSize;
+    SDL_Rect[] subimageQuads;
 
-  this(string filename, int inpSubimageWidth = -1, int inpSubimageHeight = -1){
-    spriteFilename = filename;
-    texture = loadImageToTexture(filename);
-    if(texture == null) {
-      error.report(error.missingFile, filename);
-    }
-    SDL_QueryTexture(texture, null, null, &spriteWidth, &spriteHeight);
+    this(string filename, int subimageWidth = -1, int subimageHeight = -1){
+        spriteFilename = filename;
+        texture = loadImageToTexture(filename);
+        if(texture == null) {
+            logf("Cannot create image from missing file: %s", filename);
+        }
+        SDL_QueryTexture(texture, null, null, &spriteSize.x, &spriteSize.y);
     
-    /* If single sprite, then create only 1 rect in subimages */
-    if(inpSubimageWidth == -1 || inpSubimageHeight == -1){
-      subimageWidth = spriteWidth;
-      subimageHeight = spriteHeight;
-      SDL_Rect rect = { 0,0,spriteWidth,spriteHeight };
-      subimageQuads ~= rect;
-    }else{
-      subimageWidth = inpSubimageWidth;
-      subimageHeight = inpSubimageHeight;
-      createSubimageQuads();
+        /* If single sprite, then create only 1 rect in subimages */
+        if(subimageWidth == -1 || subimageHeight == -1){
+            subimageSize.x = spriteSize.x;
+            subimageSize.y = spriteSize.y;
+            SDL_Rect rect = { 0,0,spriteSize.x,spriteSize.y };
+            subimageQuads ~= rect;
+        }else{
+            subimageSize.x = subimageWidth;
+            subimageSize.y = subimageHeight;
+            __createSubimageQuads();
+        }
     }
-  }
 
-  ~this() {
-    _log("Destroying sprite");
-    SDL_DestroyTexture(texture);
-  }
+    ~this() {
+        logf("Destroying sprite [%s]", spriteFilename);
+        SDL_DestroyTexture(texture);
+    }
   
-  void createSubimageQuads() {
-    int xcMax = cast(int)(spriteWidth/subimageWidth);
-    int ycMax = cast(int)(spriteHeight/subimageHeight);
-    for(int yc = 0; yc < ycMax; yc++){
-      for(int xc = 0; xc < xcMax; xc++){
-        SDL_Rect rect = { subimageWidth*xc, subimageHeight*yc, subimageWidth, subimageHeight };
-        subimageQuads ~= rect;
-      }
+    private void __createSubimageQuads() {
+        int xcMax = cast(int)(spriteSize.x/subimageSize.x);
+        int ycMax = cast(int)(spriteSize.y/subimageSize.y);
+        for(int yc = 0; yc < ycMax; yc++){
+            for(int xc = 0; xc < xcMax; xc++){
+            SDL_Rect rect = { subimageSize.x*xc, subimageSize.y*yc, subimageSize.x, subimageSize.y };
+            subimageQuads ~= rect;
+            }
+        }
     }
-  }
 
-  SDL_Rect getRectAtIndex(int index){
-    if(subimageQuads.length - 1 < index){
-      error.report(error.outOfBounds, format("%d %s", index, spriteFilename));
-      return subimageQuads[0];
+    private SDL_Rect __getRectAtIndex(int index){
+        if(subimageQuads.length - 1 < index){
+            logf("WARNING: SPRITE INDEX IS OUT OF BOUNDS: %d %s", index, spriteFilename);
+            return subimageQuads[0];
+        }
+        return subimageQuads[index];
     }
-    return subimageQuads[index];
-  }
 }
