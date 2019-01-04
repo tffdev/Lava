@@ -1,6 +1,9 @@
 LAVA (better name pending)
 ==========================
 
+[THE DEMO CURRENTLY DOESN'T WORK DUE TO A DESYNC BETWEEN IMAGE ASSETS.]
+[I'LL UPDATE THIS SOON ONCE I FINALISE THE ASSETS]
+
 Lava is going to be a simple 2D game engine that's simple and quick.
 I'm aiming for this engine to implement the same features as GameMaker 8.
 
