@@ -13,5 +13,5 @@ public:
     import camera;
     import text;
     import filesystem;
-    import std.experimental.logger;
+    debug import std.experimental.logger;
 

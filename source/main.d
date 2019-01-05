@@ -4,6 +4,7 @@ import std.algorithm;
 import lava;
 import backgrounds;
 
+
 void main(){
     debug log("DEBUG MODE ACTIVE");
 
@@ -31,25 +32,25 @@ void main(){
     while(!game.shouldQuit()){
         game.update(&loopfunc);
     }
-    
+
     game.quit();
 }
 
 class Girl : GameObject 
 {
-    double xvel, yvel = 0;
-    bool onground;
-    double maxmovespeed = 2;
-    double accelspeed = 1;
-    double spriteIndex = 0;
-    Sprite mainSprite;
+    private Vec2d vel = { 0, 0 };
+    private bool onground;
+    private double maxmovespeed = 2;
+    private double accelspeed = 1;
+    private double spriteIndex = 0;
+    private Sprite mainSprite;
 
     enum Animation : int[] {
         walkUp = [38,39,40,41,42,43,45,46]
     };
 
-    Animation currentAnimation = Animation.walkUp;
-    double animationSpeed = 0.2;
+    private Animation currentAnimation = Animation.walkUp;
+    private double animationSpeed = 0.2;
 
     this(int ix, int iy)
     {

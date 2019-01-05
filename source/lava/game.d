@@ -65,14 +65,11 @@ bool handleEvent(SDL_Event e, bool* quit){
         }
         break;
         default: 
-            
-        break;
     }
     return false;
 }
 
 public void quit(){
-    printf("Quitting");
     TTF_Quit();
     screen.destroy();
     SDL_Quit();
