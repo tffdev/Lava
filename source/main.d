@@ -67,9 +67,9 @@ class Girl : GameObject
         
         drawText("This is some TTF text! Hello world!", 10, 120);
         
-        if(keyboard.isDown("Left"))    {xvel -= accelspeed; mainSprite.hflip = false;}
-        if(keyboard.isDown("Right")) {xvel += accelspeed; mainSprite.hflip = true;}
-        if(keyboard.isDown("A") && onground) {y-=1; yvel = -5;}
+        if(keyboard.isDown("Left"))    {vel.x -= accelspeed; mainSprite.hflip = false;}
+        if(keyboard.isDown("Right")) {vel.x += accelspeed; mainSprite.hflip = true;}
+        if(keyboard.isDown("A") && onground) {y-=1; vel.y = -5;}
         
         applyPhysics();
 
@@ -85,21 +85,21 @@ class Girl : GameObject
 
     void applyPhysics() {
         /* Horizontal movement */
-        xvel = clamp(xvel,-maxmovespeed,maxmovespeed);
-        x += xvel;
-        xvel /= 1.5;
+        vel.x = clamp(vel.x,-maxmovespeed, maxmovespeed);
+        x += vel.x;
+        vel.x /= 1.5;
 
         int tile = getTileAt(cast(int)x+16, cast(int)y+32);
         /* Gravity and vertical cols */
         if(tile == -1){
-            yvel += 0.3;
-            yvel = clamp(yvel,-10, 10);
-            y += yvel;
+            vel.y += 0.3;
+            vel.y = clamp(vel.y,-10, 10);
+            y += vel.y;
             onground = false;
         }
 
         while(getTileAt(cast(int)x+16, cast(int)y+32) != -1){
-            yvel = 0;
+            vel.y = 0;
             y-=1;
             onground = true;
         }

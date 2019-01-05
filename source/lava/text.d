@@ -23,12 +23,12 @@ public void drawText(string textToDraw, int x, int y){
     }
     SDL_Color color = { 0, 0, 0 };
     SDL_Surface* surface = TTF_RenderText_Solid(fontm5x7, cast(char*)textToDraw, color);
-    SDL_Texture* fontRender = SDL_CreateTextureFromSurface(screen.renderer, surface);
+    SDL_Texture* fontTexture = SDL_CreateTextureFromSurface(screen.getRenderer(), surface);
     SDL_Rect a = { 0, 0, surface.w, surface.h };
     SDL_Rect b = { x, y, surface.w, surface.h };
     SDL_FreeSurface(surface);
-    SDL_RenderCopy(screen.renderer,fontRender,&a,&b);
-    SDL_DestroyTexture(fontRender);
+    SDL_RenderCopy(screen.getRenderer(),fontTexture,&a,&b);
+    SDL_DestroyTexture(fontTexture);
 }
 
 /** 

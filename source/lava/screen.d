@@ -6,9 +6,9 @@ import std.stdio;
 import std.algorithm;
 import lava;
 
-SDL_Window* window;
-SDL_Renderer* renderer;
-SDL_Texture* prescreenTexture;
+private SDL_Window* window;
+private SDL_Renderer* renderer;
+private SDL_Texture* prescreenTexture;
 
 private Vec2 windowSize;
 
@@ -112,7 +112,9 @@ double getWidth() {
 double getHeight() {
     return height;
 }
-
+SDL_Renderer* getRenderer() {
+    return renderer;
+}
 // Called when window is modified
 extern (C) int eventWindow(void* data, SDL_Event* event) nothrow {
     return 0;
