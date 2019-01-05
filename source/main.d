@@ -79,8 +79,8 @@ class Girl : GameObject
         if(keyboard.isDown("R")) {setBackground(0,"images/bg91.png");}
         if(keyboard.isDown("R")) {setBackground(0,"images/bg92.png");}
 
-        assets.drawSprite(mainSprite, currentAnimation[cast(int)spriteIndex], x, y);
-        camera.setPosition(x - 100, y-150);
+        draw.drawSprite(mainSprite, currentAnimation[cast(int)spriteIndex], x, y);
+        camera.setPosition(x - 100, y - 150);
     }
 
     void applyPhysics() {

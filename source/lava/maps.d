@@ -2,9 +2,7 @@ module maps;
 import std.stdio;
 import std.json;
 import std.file;
-
-import assets;
-import screen;
+import lava;
 
 Sprite tilemapSprite;
 

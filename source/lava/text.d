@@ -56,7 +56,7 @@ public void outputDebugText() {
             string text = debugTextBuffer[row];
             for(int i=0; i<text.length;i++){
                 char letter = text[i];
-                assets.drawSprite(debugTextSprite, 
+                draw.drawSprite(debugTextSprite, 
                     cast(int)indexOf(DEBUGALPHABET, letter), i*9, 13*row);
             }
         }

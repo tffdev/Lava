@@ -25,7 +25,7 @@ void drawBackgrounds() {
             int i = cast(int)((camera.getX() * (1 - bg.parallax)) / bg.image.spriteSize.x);
             double bgX = i*bg.image.spriteSize.x + bg.parallax * camera.getX();
             while(bgX - screen.getWidth() < camera.getX() + screen.getWidth()){
-                assets.drawSprite(bg.image, 0, bgX - screen.getWidth() + bg.offset.x, camera.getY() * bg.parallax + bg.offset.y);
+                draw.drawSprite(bg.image, 0, bgX - screen.getWidth() + bg.offset.x, camera.getY() * bg.parallax + bg.offset.y);
                 bgX += bg.image.spriteSize.x;
             }
         }

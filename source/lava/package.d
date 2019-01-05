@@ -5,7 +5,8 @@ public:
     import derelict.sdl2.image;
     import derelict.sdl2.ttf;
     import math;
-    import assets;
+    import draw;
+    import audio;
     import game;
     import maps;
     import screen;
