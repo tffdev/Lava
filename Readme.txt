@@ -1,9 +1,6 @@
 LAVA (better name pending)
 ==========================
 
-[THE DEMO CURRENTLY DOESN'T WORK DUE TO A DESYNC BETWEEN IMAGE ASSETS.]
-[I'LL UPDATE THIS SOON ONCE I FINALISE THE ASSETS]
-
 Lava is going to be a simple 2D game engine that's simple and quick.
 I'm aiming for this engine to implement the same features as GameMaker 8.
 
@@ -12,5 +9,16 @@ animated sprites, audio, backgrounds,
 keyboard/controller input and timelines.
 
 Currently working on:
-	- Virtual filesystem [don't want all games to ship with a raw folder of assets]
-	- Basic audio interface [oneshots and music loops]
+  - Documentation
+  - Audio interface [oneshots and music loops]
+  - Virtual filesystem [don't want all games to ship with a raw folder of assets]
+
+IF YOU'RE TESTING THIS OUT DURING THE CURRENT PROTOTYPE STATE, COPY
+THE "resources" FOLDER INTO YOUR GAME'S ROOT DIRECTORY IN ORDER FOR
+TTF BLITTING AND REALTIME DEBUG PRINTING TO WORK. IT CONTAINS A DEMO FONT
+AND A SPRITE USED AS DEBUG TEXT GLYPHS.
+
+[DEMO m5x7 FONT PROVIDED BY DANIEL LINSSEN @ MANAGORE.ITCH.IO 
+https://managore.itch.io/m5x7 ALSO GO PLAY HIS GAMES]
+
+THANK YOU! <3
