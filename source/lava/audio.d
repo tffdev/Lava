@@ -6,6 +6,6 @@
         - stream large audio files from disk
 */
 
-module audio;
+module lava.audio;
 
 

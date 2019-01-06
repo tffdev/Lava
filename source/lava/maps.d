@@ -1,4 +1,4 @@
-module maps;
+module lava.maps;
 import std.stdio;
 import std.json;
 import std.file;
@@ -6,11 +6,12 @@ import lava;
 
 Sprite tilemapSprite;
 
-int[] mapTiles;
-int mapWidth;
-int mapHeight;
-int tileWidth;
-int tileHeight;
+private int[] mapTiles;
+private int mapWidth;
+private int mapHeight;
+private int tileWidth;
+private int tileHeight;
+private bool mapLoaded = false;
 
 int getMapWidth() {
    return mapWidth * tileWidth; 
@@ -21,6 +22,7 @@ int getMapHeight() {
 
 void loadMap(string mapfile, string imagefile)
 {
+    mapLoaded = true;
     string mapfileOutput = std.file.readText(mapfile);
     JSONValue mapData = std.json.parseJSON(mapfileOutput);
     mapWidth = cast(int) mapData["width"].integer;
@@ -33,13 +35,19 @@ void loadMap(string mapfile, string imagefile)
     }
 }
 
+bool __checkMapValid() {
+    return mapLoaded && mapWidth > 0 && mapHeight > 0 && tileWidth > 0 && tileHeight > 0;
+}
+
 void drawMap() {
-    for(int x=0; x<mapWidth; x++){
-        for(int y=0; y < mapHeight; y++){
-            int tile = mapTiles[x % mapWidth + y * mapWidth];
-            if(tile != -1){
-                draw.drawSprite(tilemapSprite, tile, 
-                    x * tileWidth, y * tileHeight);
+    if(mapLoaded){
+        for(int x=0; x<mapWidth; x++){
+            for(int y=0; y < mapHeight; y++){
+                int tile = mapTiles[x % mapWidth + y * mapWidth];
+                if(tile != -1){
+                    draw.drawSprite(tilemapSprite, tile, 
+                        x * tileWidth, y * tileHeight);
+                }
             }
         }
     }

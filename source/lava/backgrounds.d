@@ -1,4 +1,4 @@
-module backgrounds;
+module lava.backgrounds;
 
 import lava;
 import std.math;
@@ -11,7 +11,7 @@ Background[5] backgroundImages;
     Sets a background layer up to a maximum of 5 layers. 
     "parallax" parameter: 0 means frontmost (fast movement), 1 means backmost (slow/no movement)
 */
-void setBackground(int index, string filename, double parallax = 0, int xoffset = 0, int yoffset = 0) {
+void set(int index, string filename, double parallax = 0, int xoffset = 0, int yoffset = 0) {
     // Frees memory upon overwrite of existing background
     if(backgroundImages[index] !is null) {
         backgroundImages[index].destroy();
@@ -32,6 +32,11 @@ void drawBackgrounds() {
     }
 }
 
+/**
+    A structure that contains data for a background: 
+    a sprite (the image), a parallax value (how "far away" 
+    the background is wrt camera movement) and offset data.
+*/
 class Background {
     Sprite image;
     double parallax;

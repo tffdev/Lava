@@ -1,20 +1,20 @@
-module camera;
+module lava.camera;
 import lava;
 import std.algorithm;
 
-private Vec2d  pos;
+private Vec2d  __pos;
 private bool   __canMoveOutsideMap = false;
 private bool   __lerp = true;
 private double __lerpAmount = 0.3;
 
 // let external objects manipulate camera position
 void setPosition(double x, double y){
-    pos.x = x;
-    pos.y = y;
+    __pos.x = x;
+    __pos.y = y;
 
     if(!__canMoveOutsideMap) {
-        pos.x = clamp(pos.x, 0, maps.getMapWidth() - screen.getWidth());
-        pos.y = clamp(pos.y, 0, maps.getMapHeight() - screen.getHeight());
+        __pos.x = clamp(__pos.x, 0, maps.getMapWidth() - screen.getWidth());
+        __pos.y = clamp(__pos.y, 0, maps.getMapHeight() - screen.getHeight());
     }
 }
 
@@ -28,20 +28,20 @@ void canMoveOutsideMap(bool canMove) {
 
 // geometric getter/setters
 void setX(double x){
-    pos.x = x;
+    __pos.x = x;
 }
 void setY(double y){
-    pos.y = y;
+    __pos.y = y;
 }
 double getX() {
-    return pos.x;
+    return __pos.x;
 }
 double getY() {
-    return pos.y;
+    return __pos.y;
 }
 int getXi() {
-    return cast(int)pos.x;
+    return cast(int)__pos.x;
 }
 int getYi() {
-    return cast(int)pos.y;
+    return cast(int)__pos.y;
 }

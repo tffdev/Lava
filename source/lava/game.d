@@ -1,35 +1,48 @@
-module game;
+module lava.game;
 import lava;
 import std.stdio;
-import std.conv;
 
 private GameObject[] gameObjects;
 private bool __shouldQuit = false;
 private int ticksBuffer = 0;
 
-bool shouldQuit(){
+public bool shouldQuit(){
     return __shouldQuit;
 }
 
-void quitUpdateLoop(){
-    __shouldQuit = true;
+private void shouldQuit(bool setShouldQuit){
+    __shouldQuit = setShouldQuit;
 }
 
-void update(void delegate() _userDefinedLoopFunc) {
+void update() {
+    if(!maps.__checkMapValid()) {
+        shouldQuit(true);
+        return;
+    }
     int ticksCurrent = SDL_GetTicks();
     if(ticksBuffer + 1000/60 < ticksCurrent){
         int presetp = SDL_GetTicks();
         ticksBuffer = ticksCurrent;
+
+        // event management
         SDL_Event e;
         bool quit = false;
         while(SDL_PollEvent(&e)){
             handleEvent(e, &quit);
         }
 
-        _userDefinedLoopFunc();
-        
+        // main clear->update->draw->present loop
+        screen.clear();
+        backgrounds.drawBackgrounds();
+        maps.drawMap();
+        game.stepAll();
+        screen.copyPrescreenToBuffer();
+        text.outputDebugText();
+        screen.present();
+
+        // finalising and clearing data for that frame
         keyboard.clearPressedKeys();
-        if(quit) quitUpdateLoop();
+        if(quit) shouldQuit(true);
     }
     SDL_Delay(1);
 }

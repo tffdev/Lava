@@ -7,7 +7,7 @@
         - draw filled/outlined circles
         - draw lines
 */
-module draw;
+module lava.draw;
 
 import lava;
 import std.container.array;
@@ -48,6 +48,11 @@ void drawSprite(Sprite spriteToDraw, int index, double x, double y) {
     );
 }
 
+/** 
+    Class containing a texture and metadata about an image that can
+    be blitted to the screen.
+    Contains size, quads, mirroring data etc.
+*/
 class Sprite {
     string spriteFilename;
     SDL_Texture* texture;

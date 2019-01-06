@@ -5,4 +5,4 @@
         - Return assets upon request.
 */
 
-module filesystem;
+module lava.filesystem;

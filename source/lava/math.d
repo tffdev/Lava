@@ -1,4 +1,4 @@
-module math;
+module lava.math;
 
 struct Vec2 {
     int x;

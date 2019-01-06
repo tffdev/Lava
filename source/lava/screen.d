@@ -1,7 +1,7 @@
 /**
     The Screen module contains everything that 
 */  
-module screen;
+module lava.screen;
 import std.stdio;
 import std.algorithm;
 import lava;
