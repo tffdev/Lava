@@ -1,3 +1,4 @@
+<pre>
 LAVA (better name pending)
 ==========================
 
@@ -22,3 +23,4 @@ AND A SPRITE USED AS DEBUG TEXT GLYPHS.
 https://managore.itch.io/m5x7 ALSO GO PLAY HIS GAMES]
 
 THANK YOU! <3
+</pre>

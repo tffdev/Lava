@@ -6,15 +6,11 @@ private GameObject[] gameObjects;
 private bool __shouldQuit = false;
 private int ticksBuffer = 0;
 
-public bool shouldQuit(){
-    return __shouldQuit;
-}
-
 private void shouldQuit(bool setShouldQuit){
     __shouldQuit = setShouldQuit;
 }
 
-void update() {
+public void update() {
     if(!maps.__checkMapValid()) {
         shouldQuit(true);
         return;
@@ -54,18 +50,14 @@ class GameObject {
     void step(){};
 }
 
-void stepAll() {
+private void stepAll() {
     /* update and draw stuff */
     foreach(object; gameObjects) {
         object.step();
     }
 }
 
-void addObject(GameObject obj){
-    gameObjects ~= obj;
-}
-
-bool handleEvent(SDL_Event e, bool* quit){
+private bool handleEvent(SDL_Event e, bool* quit){
     switch(e.type){
         case SDL_QUIT: *quit = true; break;
         case SDL_KEYDOWN: if(e.key.repeat == 0) keyboard.passPressedKey(e.key.keysym);
@@ -87,3 +79,13 @@ public void quit(){
     screen.destroy();
     SDL_Quit();
 }
+
+public void addObject(GameObject obj){
+    gameObjects ~= obj;
+}
+
+public bool shouldExitGameloop(){
+    return __shouldQuit;
+}
+
+

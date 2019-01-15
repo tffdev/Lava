@@ -62,6 +62,8 @@ void clear(){
     SDL_SetRenderDrawColor(screen.renderer, 0, 0, 0, 255);
     SDL_RenderClear(screen.renderer);
     SDL_SetRenderTarget(renderer, prescreenTexture);
+    SDL_SetRenderDrawColor(screen.renderer, 255, 255, 255, 255);
+    SDL_RenderClear(screen.renderer);
 }
 
 void copyPrescreenToBuffer(){
