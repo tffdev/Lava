@@ -6,58 +6,67 @@ import lava;
 
 Sprite tilemapSprite;
 
-private int[] mapTiles;
-private int mapWidth;
-private int mapHeight;
-private int tileWidth;
-private int tileHeight;
+private int[][] mapLayers;
+private Vec2 mapSize;
+private Vec2 tileSize;
 private bool mapLoaded = false;
 
 int getMapWidth() {
-   return mapWidth * tileWidth; 
+   return mapSize.x * tileSize.x; 
 }
 int getMapHeight() {
-   return mapHeight * tileHeight; 
+   return mapSize.y * tileSize.y; 
 }
 
-void loadMap(string mapfile, string imagefile)
+void loadMap(string mapfile, string imageFileName)
 {
     mapLoaded = true;
     string mapfileOutput = std.file.readText(mapfile);
     JSONValue mapData = std.json.parseJSON(mapfileOutput);
-    mapWidth = cast(int) mapData["width"].integer;
-    mapHeight = cast(int) mapData["height"].integer;
-    tileWidth = cast(int) mapData["tilewidth"].integer;
-    tileHeight = cast(int) mapData["tileheight"].integer;
-    tilemapSprite = new Sprite(imagefile, 16, 16);
-    for(int i=0; i < mapWidth * mapHeight; i++){
-        mapTiles ~= cast(int) mapData["layers"][0]["data"][i].integer - 1;
+    mapSize.x = cast(int) mapData["width"].integer;
+    mapSize.y = cast(int) mapData["height"].integer;
+    tileSize.x = cast(int) mapData["tilewidth"].integer;
+    tileSize.y = cast(int) mapData["tileheight"].integer;
+    tilemapSprite = new Sprite(imageFileName, 16, 16);
+
+    // Making this bitch empty, there's no slices anywhere, are there?
+    mapLayers = [];
+
+    // Push all the map tile values into a 2D array (NB: layers, then tiles,
+    // not X and Y coordinates of tiles).
+    for(int i = 0; i < mapData["layers"].array.length; i++){
+        int[] buffer;
+        foreach(JSONValue tile; mapData["layers"][i]["data"].array){
+            buffer ~= cast(int)tile.integer;
+        }
+        mapLayers ~= buffer;
     }
 }
 
 bool __checkMapValid() {
-    return mapLoaded && mapWidth > 0 && mapHeight > 0 && tileWidth > 0 && tileHeight > 0;
+    return mapLoaded && mapSize.x > 0 && mapSize.y > 0 && tileSize.x > 0 && tileSize.y > 0;
 }
 
 void drawMap() {
     if(mapLoaded){
-        for(int x=0; x<mapWidth; x++){
-            for(int y=0; y < mapHeight; y++){
-                int tile = mapTiles[x % mapWidth + y * mapWidth];
-                if(tile != -1){
-                    draw.drawSprite(tilemapSprite, tile, 
-                        x * tileWidth, y * tileHeight);
+        foreach(int[] layer; mapLayers){
+            for(int x=0; x < mapSize.x; x++){
+                for(int y=0; y < mapSize.y; y++){
+                    int tile = layer[x % mapSize.x + y * mapSize.x] - 1;
+                    if(tile != -1){
+                        draw.drawSprite(tilemapSprite, tile, x * tileSize.x, y * tileSize.y);
+                    }
                 }
             }
         }
     }
 }
 
-int getTileAt(int x, int y){
-    int tileval = (x / tileWidth) % mapWidth + (y / tileHeight) * mapWidth;
-    if(tileval<0 || tileval > mapTiles.length || x < 0 || y < 0 
-        || x > mapWidth*tileWidth || y > mapHeight * tileHeight){
+int getTileAt(int x, int y, int layer){
+    int tileval = (x / tileSize.x) % mapSize.x + (y / tileSize.y) * mapSize.x;
+    if(tileval<0 || tileval > mapLayers[layer].length || x < 0 || y < 0 
+        || x > mapSize.x*tileSize.x || y > mapSize.y * tileSize.y){
         return -1;
     }
-    return mapTiles[tileval];
+    return mapLayers[layer][tileval] - 1;
 }
