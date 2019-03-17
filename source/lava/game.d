@@ -10,11 +10,12 @@ private void shouldQuit(bool setShouldQuit){
     __shouldQuit = setShouldQuit;
 }
 
+/*
+    TODO:
+        THIS (UPDATE) NEEDS TO BE CONFIGURABLE BY THE USER.
+    
+*/
 public void update() {
-    if(!maps.__checkMapValid()) {
-        shouldQuit(true);
-        return;
-    }
     int ticksCurrent = SDL_GetTicks();
     if(ticksBuffer + 1000/60 < ticksCurrent){
         int presetp = SDL_GetTicks();
@@ -26,7 +27,10 @@ public void update() {
         while(SDL_PollEvent(&e)){
             handleEvent(e, &quit);
         }
-
+        /*
+            TODO: Make all of these render to different surfaces
+            then merge them depending on DEPTH of each render.
+        */
         // main clear->update->draw->present loop
         screen.clear();
         backgrounds.drawBackgrounds();
@@ -35,12 +39,12 @@ public void update() {
         screen.copyPrescreenToBuffer();
         text.outputDebugText();
         screen.present();
-
+    
         // finalising and clearing data for that frame
         keyboard.clearPressedKeys();
         if(quit) shouldQuit(true);
     }
-    SDL_Delay(1);
+    SDL_Delay(2);
 }
 
 /* Base Object template */
