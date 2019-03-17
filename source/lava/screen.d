@@ -48,6 +48,7 @@ void init(string windowTitle, int inpWindowXsize,
         
     SDL_SetRenderTarget(renderer, prescreenTexture);
     SDL_AddEventWatch(&eventWindow, window);
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 }
 
 private void loadDerelict(){
