@@ -20,14 +20,34 @@ void set(int index, string filename, double parallax = 0, int xoffset = 0, int y
 }
 
 void drawBackgrounds() {
-    foreach(bg; backgroundImages) {
-        if(bg !is null){
-            int i = cast(int)((camera.getX() * (1 - bg.parallax)) / bg.image.spriteSize.x);
-            double bgX = i*bg.image.spriteSize.x + bg.parallax * camera.getX();
-            while(bgX - screen.getWidth() < camera.getX() + screen.getWidth()){
-                draw.drawSprite(bg.image, 0, bgX - screen.getWidth() + bg.offset.x, camera.getY() * bg.parallax + bg.offset.y);
-                bgX += bg.image.spriteSize.x;
+    foreach(int i; 0..4) {
+        drawBackground(i);
+    }
+}
+
+/**
+    TODO: This algorithm is fuckin wrong
+    ====================================
+    
+    Draws a background repeated along the X and Y axis relative to camera
+    position, parallax, and screenspace boundries. Will seem to repeat
+    infinitely, but is only drawn if background would be on screen.
+*/
+void drawBackground(int index){
+    Background bg = backgroundImages[index];
+    if(bg !is null){
+        int i = cast(int)((camera.getX() * (1 - bg.parallax)) / bg.image.spriteSize.x);
+        int bgX = cast(int)(i*bg.image.spriteSize.x + bg.parallax * camera.getX());
+        while(bgX - screen.getWidth() < camera.getX() + screen.getWidth()){
+            int bgY = cast(int)(i*bg.image.spriteSize.y + bg.parallax * camera.getY());
+            while(bgY - screen.getHeight() < camera.getY() + screen.getHeight()){
+                draw.drawSprite(bg.image, 0, 
+                    bgX - screen.getWidth() + bg.offset.x, 
+                    bgY - screen.getHeight() + bg.offset.y
+                );
+                bgY += bg.image.spriteSize.y;
             }
+            bgX += bg.image.spriteSize.x;
         }
     }
 }
