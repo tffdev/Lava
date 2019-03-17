@@ -1,5 +1,18 @@
 LAVA (better name pending)
-==========================
+====================================
+
+TODO:
+====================================
+- tile meeting algorithms (get map tile width, check each corner of hitbox)
+- library function for drawing circles!
+- how to implement animations...
+
+
+PLAN:
+====================================
+- LITERALLY GAME MAKER BUT OPEN SOURCE
+- The only gaping issue is with room creation... 
+  make an in-browser level editor?
 
 Lava is going to be a simple 2D game engine that's simple and quick.
 I'm aiming for this engine to implement the same features as GameMaker 8.
