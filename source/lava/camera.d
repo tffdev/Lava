@@ -2,7 +2,7 @@ module lava.camera;
 import lava;
 import std.algorithm;
 
-private Vec2d  __pos;
+private Vec2d  __pos = {0, 0};
 private bool   __canMoveOutsideMap = false;
 private bool   __lerp = true;
 private double __lerpAmount = 0.3;
