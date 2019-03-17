@@ -48,6 +48,14 @@ void drawSprite(Sprite spriteToDraw, int index, double x, double y) {
     );
 }
 
+void drawRect(int x,int y,int w,int h) {
+    SDL_Rect rect = SDL_Rect(x - camera.getXi(),y - camera.getYi(),w,h);
+    SDL_RenderFillRect(screen.getRenderer(), &rect);
+}
+
+void setDrawColor(ubyte r, ubyte g, ubyte b, ubyte a) {
+    SDL_SetRenderDrawColor(screen.getRenderer(), r, g, b, a);
+}
 /** 
     Class containing a texture and metadata about an image that can
     be blitted to the screen.
