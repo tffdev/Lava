@@ -3,6 +3,7 @@ LAVA (better name pending)
 
 TODO:
 ====================================
+- IMPORTANT: ADD EXAMPLES
 - tile meeting algorithms (get map tile width, check each corner of hitbox)
 - library function for drawing circles!
 - how to implement animations...
